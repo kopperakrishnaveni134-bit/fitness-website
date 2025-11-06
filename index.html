@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Fitness — BMI & Tips</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent:#2d6a4f;
+      --accent-2:#40916c;
+      --bg1:#d4fc79;
+      --bg2:#96e6a1;
+      --glass: rgba(255,255,255,0.7);
+      --max-width:900px;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:'Poppins',sans-serif;
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      padding:28px 16px 80px;
+    }
+    .card{
+      width:100%;
+      max-width:var(--max-width);
+      background: linear-gradient(to bottom right, rgba(255,255,255,0.85), rgba(255,255,255,0.9));
+      border-radius:14px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      padding:22px;
+    }
+    header{display:flex;gap:16px;align-items:center}
+    .logo{
+      width:64px;height:64px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px
+    }
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 18px;color:#164e3b}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+    .panel{background:var(--glass);padding:16px;border-radius:10px}
+    label{display:block;font-weight:600;margin:8px 0 6px}
+    input[type="number"], input[type="text"], textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);font-size:14px}
+    .row{display:flex;gap:8px;align-items:center}
+    .row input{flex:1}
+    button.primary{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer}
+    button.primary:hover{background:var(--accent-2)}
+
+    #result{margin-top:12px;font-weight:700}
+    .small{font-size:13px;color:#334d3b}
+
+    .tips{display:flex;flex-direction:column;gap:8px}
+    .tip{background:#fff;padding:10px;border-radius:8px;border-left:4px solid var(--accent);}
+
+    footer{margin-top:16px;text-align:center;color:#13402a}
+
+    /* chatbot */
+    .chatbox{display:flex;flex-direction:column;gap:8px}
+    .messages{height:220px;overflow:auto;padding:8px;border-radius:8px;background:linear-gradient(180deg,#f8fff8,#ffffff);border:1px solid rgba(0,0,0,0.04)}
+    .msg{padding:8px;border-radius:8px;margin-bottom:8px;max-width:80%}
+    .msg.user{background:#2d6a4f;color:#fff;align-self:flex-end}
+    .msg.bot{background:#fff;border:1px solid rgba(0,0,0,0.06);align-self:flex-start}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <div class="logo">SF</div>
+      <div>
+        <h1>Smart Fitness</h1>
+        <p class="lead">Quick BMI checker + instant fitness tips. Build healthy habits one step at a time.</p>
+      </div>
+    </header>
+
+    <main style="margin-top:16px">
+      <div class="grid">
+        <!-- Left: BMI -->
+        <section class="panel">
+          <h2 style="margin:0 0 6px">BMI Calculator</h2>
+          <p class="small">Enter height in cm and weight in kg</p>
+
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" min="30" max="300" placeholder="e.g. 170">
+
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" min="2" max="600" placeholder="e.g. 65">
+
+          <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+            <button class="primary" id="calcBtn">Check BMI</button>
+            <button id="saveBtn" style="padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:#fff;cursor:pointer">Save</button>
+            <button id="clearBtn" style="padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:#fff;cursor:pointer">Clear</button>
+          </div>
+
+          <p id="result"></p>
+
+          <div style="margin-top:12px">
+            <h3 style="margin:0 0 6px">Quick Tips</h3>
+            <div class="tips">
+              <div class="tip">Drink at least 8 glasses of water daily.</div>
+              <div class="tip">Include protein in every meal to stay full longer.</div>
+              <div class="tip">Walk 30 minutes daily or do a short home workout.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Chatbot & History -->
+        <aside>
+          <div class="panel" style="margin-bottom:12px">
+            <h3 style="margin:0 0 8px">Fitness Chatbot</h3>
+            <div class="chatbox">
+              <div class="messages" id="messages"></div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input type="text" id="userInput" placeholder="Ask about diet, exercise, sleep...">
+                <button class="primary" id="sendBtn">Send</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin:0 0 8px">Last Saved BMI</h3>
+            <div id="history" class="small">No saved BMI yet.</div>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <p>Made with care — start small, stay consistent.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Utils
+    function getCategory(bmi){
+      if (bmi < 18.5) return 'Underweight 🥗';
+      if (bmi >= 18.5 && bmi < 24.9) return 'Normal 💪';
+      if (bmi >= 25 && bmi < 29.9) return 'Overweight 🍔';
+      return 'Obese ⚠️';
+    }
+
+    // Calculate BMI
+    function calculateBMI(){
+      const h = parseFloat(document.getElementById('height').value);
+      const w = parseFloat(document.getElementById('weight').value);
+      const out = document.getElementById('result');
+
+      if (!h || !w || h <= 0 || w <= 0){
+        out.innerHTML = '⚠️ Please enter valid height and weight.';
+        return;
+      }
+
+      const bmi = +(w / ((h/100)*(h/100))).toFixed(2);
+      const cat = getCategory(bmi);
+      out.innerHTML = `Your BMI is <strong>${bmi}</strong> — ${cat}`;
+    }
+
+    // Chatbot (simple rule-based)
+    function appendMessage(text, who='bot'){
+      const box = document.createElement('div');
+      box.className = 'msg ' + (who==='user' ? 'user' : 'bot');
+      box.textContent = text;
+      const container = document.getElementById('messages');
+      container.appendChild(box);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function botReply(input){
+      input = input.toLowerCase();
+      if (!input) return 'Tell me what you want help with — diet, exercise, sleep, or habits.';
+      if (input.includes('diet')) return 'Try a balanced plate: protein, carbs, vegetables. Avoid sugary drinks.';
+      if (input.includes('exercise')) return 'Start with 20–30 minutes walking or home workout 4 times a week.';
+      if (input.includes('sleep')) return 'Aim for 7–8 hours of consistent sleep. Avoid screens 30 min before bed.';
+      if (input.includes('water')) return 'Drink 2–3 liters of water daily, more if you exercise.';
+      return "Keep a small goal this week — consistency beats intensity. Try a 10-minute walk today.";
+    }
+
+    // Save & Load BMI to localStorage
+    function saveBMI(){
+      const h = document.getElementById('height').value;
+      const w = document.getElementById('weight').value;
+      if (!h || !w) return alert('Enter height and weight before saving.');
+      const bmi = +(parseFloat(w) / ((parseFloat(h)/100)*(parseFloat(h)/100))).toFixed(2);
+      const record = {bmi:bmi, height:h, weight:w, time: new Date().toISOString()};
+      localStorage.setItem('smartfitness_last', JSON.stringify(record));
+      updateHistory();
+      alert('Saved ✔️');
+    }
+
+    function clearInputs(){
+      document.getElementById('height').value = '';
+      document.getElementById('weight').value = '';
+      document.getElementById('result').innerHTML = '';
+    }
+
+    function updateHistory(){
+      const hist = document.getElementById('history');
+      const raw = localStorage.getItem('smartfitness_last');
+      if (!raw){ hist.textContent = 'No saved BMI yet.'; return; }
+      const r = JSON.parse(raw);
+      const d = new Date(r.time);
+      hist.innerHTML = `BMI: <strong>${r.bmi}</strong> (w:${r.weight}kg, h:${r.height}cm) — <span style=\"color:#555\">${d.toLocaleString()}</span>`;
+    }
+
+    // Event bindings
+    document.getElementById('calcBtn').addEventListener('click', calculateBMI);
+    document.getElementById('saveBtn').addEventListener('click', saveBMI);
+    document.getElementById('clearBtn').addEventListener('click', clearInputs);
+
+    document.getElementById('sendBtn').addEventListener('click', function(){
+      const inputEl = document.getElementById('userInput');
+      const val = inputEl.value.trim();
+      if (!val) return;
+      appendMessage(val, 'user');
+      setTimeout(()=> appendMessage(botReply(val), 'bot'), 400);
+      inputEl.value = '';
+    });
+
+    // load history on start
+    updateHistory();
+
+  </script>
+</body>
+</html>
